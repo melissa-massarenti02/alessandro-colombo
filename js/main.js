@@ -2,6 +2,9 @@
  * Gestione dinamica dei prodotti e invio ordine
  */
 
+// COSTANTE VITALE: L'indirizzo del tuo motore su Render
+const API_URL = "https://alessandro-colombo.onrender.com";
+
 // 1. Aggiorna il nome del file visibile quando si carica la ricevuta
 function updateFileName(input) {
     const fileName = input && input.files && input.files[0] ? input.files[0].name : "";
@@ -19,7 +22,8 @@ function updateFileName(input) {
 // 2. Funzione per aggiornare visivamente il counter e la barra senza ricaricare
 async function refreshSlotStatus() {
     try {
-        const response = await fetch('/api/slot-status');
+        // MODIFICATO: Ora punta a Render
+        const response = await fetch(`${API_URL}/api/slot-status`);
         const data = await response.json();
         
         const countElement = document.getElementById('slot-count');
@@ -47,13 +51,11 @@ if (addProductBtn) {
     addProductBtn.addEventListener('click', () => {
         const productList = document.getElementById('product-list');
         const items = document.querySelectorAll('.product-item');
-        const newItem = items[0].cloneNode(true); // Cloniamo sempre il primo (pulito)
+        const newItem = items[0].cloneNode(true); 
         
-        // Reset dei valori
         newItem.querySelector('input[type="number"]').value = 1;
         newItem.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
         
-        // Aggiungi tasto rimuovi se non presente
         if (!newItem.querySelector('.remove-item')) {
             const removeBtn = document.createElement('button');
             removeBtn.innerHTML = "RIMUOVI";
@@ -75,7 +77,6 @@ document.getElementById('orderForm').addEventListener('submit', async (e) => {
     const submitBtn = e.target.querySelector('.btn-submit');
     const originalText = submitBtn.innerHTML;
 
-    // --- CONTROLLO VITALE: RICEVUTA OBBLIGATORIA ---
     if (!fileInput.files || fileInput.files.length === 0) {
         alert("⚠️ CAMPO OBBLIGATORIO: Ricevuta di Pagamento\n\nNon è possibile procedere senza allegare lo screenshot del pagamento.");
         dropZone.style.border = "2px dashed #ff0033"; 
@@ -83,14 +84,14 @@ document.getElementById('orderForm').addEventListener('submit', async (e) => {
         return; 
     }
 
-    // Feedback visivo invio
     submitBtn.innerHTML = "ELABORAZIONE SLOT...";
     submitBtn.disabled = true;
 
     const formData = new FormData(e.target);
 
     try {
-        const response = await fetch('/api/preordine', {
+        // MODIFICATO: Ora punta a Render
+        const response = await fetch(`${API_URL}/api/preordine`, {
             method: 'POST',
             body: formData
         });
@@ -100,17 +101,14 @@ document.getElementById('orderForm').addEventListener('submit', async (e) => {
         if (result.success) {
             alert(`✅ ORDINE CONFERMATO!\nID: ${result.orderId}\nTotale slot attuale: ${result.totalPieces}/10`);
             
-            // --- RESET DINAMICO SENZA RELOAD ---
-            e.target.reset(); // Svuota i testi
-            updateFileName(null); // Reset grafica upload
+            e.target.reset(); 
+            updateFileName(null); 
             
-            // Rimuovi righe prodotto extra se presenti
             const items = document.querySelectorAll('.product-item');
             for(let i = 1; i < items.length; i++) {
                 items[i].remove();
             }
 
-            // Aggiorna il counter e la barra subito
             await refreshSlotStatus(); 
             
         } else {
@@ -118,7 +116,7 @@ document.getElementById('orderForm').addEventListener('submit', async (e) => {
         }
     } catch (error) {
         console.error(error);
-        alert("📡 Errore di connessione al server.");
+        alert("📡 Errore di connessione al server Render.");
     } finally {
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
