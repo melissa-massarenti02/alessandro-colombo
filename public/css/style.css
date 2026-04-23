@@ -1,0 +1,210 @@
+/* SETUP GENERALE */
+body {
+    background-color: #0b0b0b;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+}
+
+/* TIPOGRAFIA */
+h1, h2, .btn-submit, .input-label {
+    font-family: 'Archivo Black', sans-serif;
+}
+
+.hero-title {
+    font-size: clamp(4rem, 10vw, 6rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    font-style: italic;
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+}
+
+.text-highlight {
+    color: #eeff00;
+}
+
+/* COMPONENTI LATO INFO */
+.badge-fluo {
+    display: inline-block;
+    background-color: #eeff00;
+    color: black;
+    font-size: 0.75rem;
+    font-weight: 900;
+    padding: 0.25rem 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+}
+
+.status-card {
+    background-color: #141414;
+    border-left: 8px solid #eeff00;
+    padding: 1.5rem;
+    box-shadow: 20px 20px 60px rgba(0,0,0,0.5);
+}
+
+.label-tech {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: #666;
+}
+
+.slot-number {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #eeff00;
+}
+
+.slot-total {
+    font-size: 1.25rem;
+    color: #333;
+    font-weight: 700;
+}
+
+.progress-bar-bg {
+    width: 100%;
+    background-color: #222;
+    height: 8px;
+    margin-top: 1rem;
+}
+
+.progress-bar-fill {
+    background-color: #eeff00;
+    height: 100%;
+    box-shadow: 0 0 10px rgba(238, 255, 0, 0.5);
+}
+
+.disclaimer-text {
+    margin-top: 1rem;
+    font-size: 0.7rem;
+    color: #555;
+    text-transform: uppercase;
+    line-height: 1.6;
+}
+
+/* FORM E INPUT */
+.order-form {
+    background-color: #111;
+    padding: 2.5rem;
+    border: 1px solid #1a1a1a;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.input-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #eeff00;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.main-input {
+    width: 100%;
+    background-color: #0b0b0b;
+    border: 1px solid #222;
+    padding: 1rem;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.main-input:focus {
+    outline: none;
+    border-color: #eeff00;
+    box-shadow: 0 0 15px rgba(238, 255, 0, 0.2);
+}
+
+/* CARICAMENTO FILE */
+.file-upload-zone {
+    border: 2px dashed #222;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.file-upload-zone:hover {
+    border-color: #eeff00;
+    background: rgba(238, 255, 0, 0.02);
+}
+
+.icon-upload {
+    color: #444;
+    transition: color 0.3s ease;
+}
+
+.file-upload-zone:hover .icon-upload {
+    color: #eeff00;
+}
+
+.upload-text {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #666;
+}
+
+.file-status {
+    display: block;
+    font-size: 0.6rem;
+    color: #eeff00;
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+/* BOTTONE */
+.btn-submit {
+    width: 100%;
+    background-color: #eeff00;
+    color: black;
+    padding: 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-style: italic;
+    letter-spacing: 0.3em;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-submit:hover {
+    background-color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(238, 255, 0, 0.2);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+}
+
+/* DECORAZIONI */
+.deco-corner {
+    position: absolute;
+    top: -1rem;
+    right: -1rem;
+    width: 6rem;
+    height: 6rem;
+    border-top: 4px solid #eeff00;
+    border-right: 4px solid #eeff00;
+    z-index: 0;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.line-deco {
+    height: 1px;
+    width: 2rem;
+    background-color: #eeff00;
+}
+
+.feature-item p {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #aaa;
+}

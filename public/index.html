@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preordine T-Shirt Scuderia</title>
+    
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://cdn.tailwindcss.com https://fonts.googleapis.com https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:;">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="text-white">
+
+    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 min-h-screen flex items-center">
+        <div class="grid grid-cols-1 gap-12 md:grid-cols-2 items-start w-full">
+            
+            <div class="space-y-8">
+                <div>
+                    <span class="badge-fluo">Official Merch 2026 Pre-order</span>
+                    <h1 class="hero-title">
+                        FAN-ZONE <br> <span class="text-highlight">COLOMBO</span>
+                    </h1>
+                </div>
+
+                <div class="status-card">
+                    <p class="label-tech italic text-[#eeff00]">⚠️ REGOLAMENTO SLOT</p>
+                    <div class="flex items-baseline gap-2 mt-1">
+                        <span class="slot-number" id="slot-count">0</span>
+                        <span class="slot-total">/ 10 PEZZI TOTALI</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+                    </div>
+                    <p class="disclaimer-text">
+                        La produzione viene avviata solo al raggiungimento di **10 pezzi minimi** nello slot corrente. 
+                        <br>Sviluppo: 15gg lavorativi dalla chiusura slot.
+                    </p>
+                </div>
+
+                <div class="features-list">
+                    <div class="feature-item">
+                        <div class="line-deco"></div>
+                        <p>Ritiro a mano in sede (€0)</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="line-deco"></div>
+                        <p>ID Ordine Unico per più prodotti</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative">
+                <div class="deco-corner"></div>
+                
+                <form id="orderForm" class="order-form">
+                    <div class="input-group">
+                        <label class="input-label">Pilota / Cliente</label>
+                        <input type="text" id="name" name="name" placeholder="Inserisci Nome e Cognome" required class="main-input">
+                    </div>
+
+                    <hr class="border-gray-800 my-6">
+
+                    <div id="product-list" class="space-y-6">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-gray-500">Configurazione Prodotti</p>
+                        
+                        <div class="product-item bg-[#0b0b0b] p-4 border border-gray-800 relative">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="input-group">
+                                    <label class="input-label">Taglia</label>
+                                    <select name="size[]" required class="main-input appearance-none">
+                                        <option value="" disabled selected>Seleziona Taglia</option>
+                                        <option value="XS">XS</option>
+                                        <option value="S">S</option>
+                                        <option value="M">M</option>
+                                        <option value="L">L</option>
+                                        <option value="XL">XL</option>
+                                        <option value="XXL">XXL</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label">Quantità</label>
+                                    <input type="number" name="qty[]" min="1" value="1" required class="main-input">
+                                </div>
+                            </div>
+                            <div class="input-group mt-4">
+                                <label class="input-label">Colore</label>
+                                <select name="color[]" required class="main-input appearance-none">
+                                    <option value="" disabled selected>Scegli Colore Fluo</option>
+                                    <option value="green">Verde Fluo</option>
+                                    <option value="yellow">Giallo Fluo</option>
+                                    <option value="orange">Arancione Fluo</option>
+                                    <option value="pink">Fucsia Fluo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" id="add-product" class="text-[#eeff00] text-[10px] font-black uppercase tracking-[0.2em] mt-4 hover:text-white transition-colors">
+                        + Aggiungi altra taglia/colore
+                    </button>
+
+                    <hr class="border-gray-800 my-6">
+
+                    <div class="input-group">
+                        <label class="input-label">Metodo Pagamento Scelto</label>
+                        <select id="payment" name="payment" required class="main-input appearance-none">
+                            <option value="" disabled selected>Seleziona metodo di pagamento</option>
+                            <option value="paypal">PayPal</option>
+                            <option value="bonifico">Bonifico</option>
+                        </select>
+                    </div>
+
+                    <div class="file-upload-zone" id="drop-zone" style="border: 2px dashed #333;">
+                        <label class="file-label cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2 icon-upload" id="upload-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-7l-4-4m0 0l-4 4m4-4v12" />
+                            </svg>
+                            <span class="upload-text">Carica Screenshot Ricevuta (Obbligatorio)</span>
+                            <input type="file" id="receipt" name="receipt" accept="image/*" class="hidden" required onchange="updateFileName(this)">
+                            <span id="file-name" class="file-status block mt-2 text-[#eeff00] font-bold text-sm"></span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-submit mt-6">Conferma Preordine</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
