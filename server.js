@@ -46,7 +46,7 @@ app.use(express.json());
 
 // --- CONFIGURAZIONE FILE UPLOADS ---
 // Nota: Su Render i file in 'uploads' spariranno al riavvio, ma l'ordine su Firebase resterà.
-const uploadDir = path.join(__dirname, 'public', 'uploads');
+const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({
