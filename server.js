@@ -3,18 +3,32 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const admin = require('firebase-admin');
+const cors = require('cors'); // AGGIUNTO: Necessario per GitHub Pages
 const app = express();
 
-// --- CONFIGURAZIONE FIREBASE ---
-// Usiamo path.join per essere sicuri di trovare il file nella cartella corretta
-const serviceAccountPath = path.join(__dirname, 'firebase-key.json');
+// --- CONFIGURAZIONE FIREBASE (DINAMICA PER RENDER/LOCALE) ---
+let serviceAccount;
 
-if (!fs.existsSync(serviceAccountPath)) {
-    console.error("❌ ERRORE: Il file firebase-key.json non è stato trovato nella cartella!");
-    process.exit(1); // Ferma il server se manca la chiave
+if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    // Se siamo su Render, leggiamo dalla variabile d'ambiente
+    try {
+        serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+        console.log("✅ Firebase: Inizializzato tramite Variabile d'Ambiente");
+    } catch (err) {
+        console.error("❌ Errore nel parsing della variabile FIREBASE_SERVICE_ACCOUNT:", err);
+        process.exit(1);
+    }
+} else {
+    // Se siamo in locale, cerchiamo il file fisico
+    const localKeyPath = path.join(__dirname, 'firebase-key.json');
+    if (fs.existsSync(localKeyPath)) {
+        serviceAccount = require(localKeyPath);
+        console.log("✅ Firebase: Inizializzato tramite file locale");
+    } else {
+        console.error("❌ ERRORE: Chiave Firebase non trovata né in locale né in ambiente!");
+        process.exit(1);
+    }
 }
-
-const serviceAccount = require(serviceAccountPath);
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
@@ -24,7 +38,14 @@ const db = admin.firestore();
 const ordersCollection = db.collection('orders');
 const statsDoc = db.doc('settings/slot_stats');
 
+// --- MIDDLEWARE ---
+app.use(cors()); // AGGIUNTO: Permette chiamate da domini diversi (es. GitHub -> Render)
+app.use(express.static(__dirname));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 // --- CONFIGURAZIONE FILE UPLOADS ---
+// Nota: Su Render i file in 'uploads' spariranno al riavvio, ma l'ordine su Firebase resterà.
 const uploadDir = path.join(__dirname, 'public', 'uploads');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
@@ -35,10 +56,6 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage: storage });
-
-app.use(express.static('public'));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
 
 // Funzione di calcolo slot su Firebase
 async function getGlobalSlotStatus() {
@@ -63,11 +80,10 @@ app.get('/api/slot-status', async (req, res) => {
 app.post('/api/preordine', upload.single('receipt'), async (req, res) => {
     try {
         console.log("--- NUOVO ORDINE (FIREBASE MODE) ---");
-        console.log("Dati ricevuti:", req.body);
-
+        
         const { name, payment } = req.body;
 
-        // NORMALIZZAZIONE: Gestisce sia array che valori singoli (risolve bug quantità)
+        // NORMALIZZAZIONE QUANTITÀ
         const sizes = req.body['size[]'] || req.body.size;
         const colors = req.body['color[]'] || req.body.color;
         const qtys = req.body['qty[]'] || req.body.qty;
@@ -94,44 +110,41 @@ app.post('/api/preordine', upload.single('receipt'), async (req, res) => {
         });
 
         if (totalPiecesInThisOrder === 0) {
-            console.log("⚠️ Blocca: Nessuna quantità valida trovata.");
             return res.status(400).json({ success: false, message: "Quantità non valida." });
         }
 
         // SALVATAGGIO SU FIREBASE
-        // 1. Salviamo l'ordine nella collezione 'orders'
         await ordersCollection.doc(orderId).set({
             orderId,
             cliente: name,
             metodo_pagamento: payment,
-            ricevuta: req.file ? req.file.filename : null,
+            ricevuta: req.file ? req.file.filename : "nessuna-ricevuta",
             prodotti: orderItems,
             pezzi_totali: totalPiecesInThisOrder,
             timestamp: admin.firestore.FieldValue.serverTimestamp()
         });
 
-        // 2. Aggiorniamo il contatore globale (Atomico)
+        // Aggiorniamo il contatore globale
         await statsDoc.set({
             totalPieces: admin.firestore.FieldValue.increment(totalPiecesInThisOrder)
         }, { merge: true });
 
         const currentTotal = await getGlobalSlotStatus();
-        console.log(`✅ Registrato! Totale slot: ${currentTotal}/10`);
-
+        
         res.json({ 
             success: true, 
             orderId: orderId,
-            totalPieces: currentTotal,
-            message: "Ordine salvato su Firebase!" 
+            totalPieces: currentTotal
         });
 
     } catch (error) {
-        console.error("❌ Errore critico server (Firebase):", error);
+        console.error("❌ Errore server:", error);
         res.status(500).json({ success: false, message: "Errore interno del server" });
     }
 });
 
-const PORT = 3000;
+// Porta dinamica per Render o 3000 per locale
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`🚀 Server Racing pronto su http://localhost:${PORT}`);
+    console.log(`🚀 Server Racing pronto sulla porta ${PORT}`);
 });
