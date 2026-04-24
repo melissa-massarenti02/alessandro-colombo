@@ -90,7 +90,7 @@ app.post('/api/preordine', upload.single('receipt'), async (req, res) => {
     try {
         console.log("--- NUOVO ORDINE (FIREBASE MODE) ---");
         
-        const { name, payment } = req.body;
+        const { name,email, payment } = req.body;
 
         // NORMALIZZAZIONE QUANTITÀ
         const sizes = req.body['size[]'] || req.body.size;
@@ -126,6 +126,7 @@ app.post('/api/preordine', upload.single('receipt'), async (req, res) => {
         await ordersCollection.doc(orderId).set({
             orderId,
             cliente: name,
+            email: email,
             metodo_pagamento: payment,
             ricevuta: req.file ? req.file.filename : "nessuna-ricevuta",
             prodotti: orderItems,
@@ -149,7 +150,7 @@ app.post('/api/preordine', upload.single('receipt'), async (req, res) => {
                     from: '"Sito Merch" <alessandrocolombo.rally@gmail.com>',
                     to: 'alessandrocolombo.rally@gmail.com',
                     subject: `🏎️ NUOVO ORDINE: ${name} (${orderId})`,
-                    text: `Hai ricevuto un nuovo ordine!\n\nCliente: ${name}\nID Ordine: ${orderId}\nMetodo di Pagamento: ${payment}\n\nDETTAGLIO PRODOTTI:\n${riepilogoProdotti}\n\nPezzi Totali: ${totalPiecesInThisOrder}\n\nLa ricevuta del pagamento è allegata a questa mail.`,
+                    text: `Hai ricevuto un nuovo ordine!\n\nCliente: ${name}\nEmail di ricontatto: ${email}\nID Ordine: ${orderId}\nMetodo di Pagamento: ${payment}\n\nDETTAGLIO PRODOTTI:\n${riepilogoProdotti}\n\nPezzi Totali: ${totalPiecesInThisOrder}\n\nLa ricevuta del pagamento è allegata a questa mail.`,
                     attachments: [
                         {
                             filename: req.file.originalname,
