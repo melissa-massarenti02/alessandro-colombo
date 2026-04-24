@@ -4,7 +4,16 @@ const path = require('path');
 const fs = require('fs');
 const admin = require('firebase-admin');
 const cors = require('cors'); // AGGIUNTO: Necessario per GitHub Pages
+const nodemailer = require('nodemailer');
 const app = express();
+// --- CONFIGURAZIONE EMAIL ---
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'alessandrocolombo.rally@gmail.com',
+        pass: 'whuphqayaajdvoos' // <--- METTI QUI LA PASSWORD APP DI 16 LETTERE
+    }
+});
 
 // --- CONFIGURAZIONE FIREBASE (DINAMICA PER RENDER/LOCALE) ---
 let serviceAccount;
@@ -128,6 +137,29 @@ app.post('/api/preordine', upload.single('receipt'), async (req, res) => {
         await statsDoc.set({
             totalPieces: admin.firestore.FieldValue.increment(totalPiecesInThisOrder)
         }, { merge: true });
+
+        // INVIO EMAIL DI BACKUP
+        try {
+            if (req.file) {
+                const mailOptions = {
+                    from: '"Sito Merch" <alessandrocolombo.rally@gmail.com>',
+                    to: 'alessandrocolombo.rally@gmail.com',
+                    subject: `🏎️ NUOVO ORDINE: ${name} (${orderId})`,
+                    text: `Dettagli ordine:\n\nCliente: ${name}\nID Ordine: ${orderId}\nMetodo: ${payment}\nPezzi Totali: ${totalPiecesInThisOrder}\n\nLa ricevuta è in allegato.`,
+                    attachments: [
+                        {
+                            filename: req.file.originalname,
+                            path: req.file.path // Prende il file dalla cartella uploads/ di Render
+                        }
+                    ]
+                };
+                await transporter.sendMail(mailOptions);
+                console.log("✅ Email inviata con successo!");
+            }
+        } catch (mailError) {
+            // Logghiamo l'errore ma non blocchiamo la risposta al cliente
+            console.error("❌ Errore invio email:", mailError);
+        }
 
         const currentTotal = await getGlobalSlotStatus();
         
