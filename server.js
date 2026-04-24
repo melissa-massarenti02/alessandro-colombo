@@ -145,7 +145,13 @@ app.post('/api/preordine', upload.single('receipt'), async (req, res) => {
                     from: '"Sito Merch" <alessandrocolombo.rally@gmail.com>',
                     to: 'alessandrocolombo.rally@gmail.com',
                     subject: `🏎️ NUOVO ORDINE: ${name} (${orderId})`,
-                    text: `Dettagli ordine:\n\nCliente: ${name}\nID Ordine: ${orderId}\nMetodo: ${payment}\nPezzi Totali: ${totalPiecesInThisOrder}\n\nLa ricevuta è in allegato.`,
+                    text: `Hai ricevuto un nuovo ordine!\n\n` +
+                          `Cliente: ${name}\n` +
+                          `ID Ordine: ${orderId}\n` +
+                          `Metodo di Pagamento: ${payment}\n\n` +
+                          `DETTAGLIO PRODOTTI:\n${riepilogoProdotti}\n\n` +
+                          `Pezzi Totali: ${totalPiecesInThisOrder}\n\n` +
+                          `La ricevuta del pagamento è allegata a questa mail.`,
                     attachments: [
                         {
                             filename: req.file.originalname,
