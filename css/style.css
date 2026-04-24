@@ -10,6 +10,10 @@ h1, h2, .btn-submit, .input-label {
     font-family: 'Archivo Black', sans-serif;
 }
 
+.input-group {
+    margin-bottom: 20px; /* Regola questo valore per aumentare o diminuire lo spazio */
+}
+
 .hero-title {
     font-size: clamp(4rem, 10vw, 6rem);
     font-weight: 900;
