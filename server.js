@@ -141,6 +141,10 @@ app.post('/api/preordine', upload.single('receipt'), async (req, res) => {
         // INVIO EMAIL DI BACKUP
         try {
             if (req.file) {
+                // Creiamo una stringa leggibile per i prodotti
+                const riepilogoProdotti = orderItems.map(item => 
+                    `- ${item.quantita}x Taglia: ${item.taglia}, Colore: ${item.colore}`
+                ).join('\n');
                 const mailOptions = {
                     from: '"Sito Merch" <alessandrocolombo.rally@gmail.com>',
                     to: 'alessandrocolombo.rally@gmail.com',
